@@ -1,0 +1,78 @@
+.hero {
+  margin-bottom: 1.5rem;
+
+  h1 {
+    margin: 0 0 0.5rem;
+    font-size: 1.75rem;
+    font-weight: 500;
+  }
+
+  .lead {
+    margin: 0;
+    max-width: 52rem;
+    line-height: 1.5;
+    color: rgba(0, 0, 0, 0.7);
+  }
+}
+
+.grid {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+}
+
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.step {
+  h3 {
+    margin: 0 0 0.35rem;
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  p {
+    margin: 0 0 0.75rem;
+    line-height: 1.45;
+    color: rgba(0, 0, 0, 0.75);
+  }
+}
+
+.currency-grid {
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+  margin-bottom: 1rem;
+}
+
+.currency-item {
+  display: grid;
+  gap: 0.1rem;
+  padding: 0.5rem 0.65rem;
+  border-radius: 8px;
+  background: rgba(21, 101, 192, 0.06);
+
+  .code {
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+
+  .name {
+    font-size: 0.8rem;
+    color: rgba(0, 0, 0, 0.65);
+  }
+
+  .spread {
+    font-size: 0.75rem;
+    color: rgba(0, 0, 0, 0.5);
+  }
+}
+
+.hint {
+  margin: 0;
+  font-size: 0.875rem;
+  color: rgba(0, 0, 0, 0.6);
+}

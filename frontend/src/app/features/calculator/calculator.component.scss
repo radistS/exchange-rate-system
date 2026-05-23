@@ -1,0 +1,22 @@
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  align-items: start;
+  margin-bottom: 16px;
+}
+
+.hint {
+  color: #5f6368;
+}
+
+.result .rate {
+  font-size: 1.75rem;
+  font-weight: 500;
+  margin: 8px 0;
+}
+
+.meta {
+  color: #5f6368;
+  font-size: 0.875rem;
+}

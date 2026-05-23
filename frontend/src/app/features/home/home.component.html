@@ -1,0 +1,67 @@
+<section class="hero">
+  <h1>Exchange Rate System</h1>
+  <p class="lead">
+    Spread-adjusted currency rates, historical trends, usage analytics, and AI-powered insights.
+    Demo data covers the <strong>last 30 days</strong> for all supported currencies below.
+  </p>
+</section>
+
+<div class="grid">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>How to use</mat-card-title>
+    </mat-card-header>
+    <mat-card-content class="steps">
+      <div class="step">
+        <h3>1. Calculator</h3>
+        <p>
+          Pick a <strong>from</strong> and <strong>to</strong> currency (3-letter ISO code). Optionally choose a
+          date with the calendar — leave empty for the latest available rate. The API returns a spread-adjusted
+          exchange rate and query counters.
+        </p>
+        <a mat-flat-button color="primary" routerLink="/calculator">Open Calculator</a>
+      </div>
+      <div class="step">
+        <h3>2. Historical</h3>
+        <p>
+          Select a currency pair and a date range (calendar pickers). View a table, line chart, and an AI trend
+          summary for the period. Try EUR → PLN or EUR → GBP over the last month.
+        </p>
+        <a mat-stroked-button color="primary" routerLink="/historical">Open Historical</a>
+      </div>
+      <div class="step">
+        <h3>3. Analytics</h3>
+        <p>
+          See which currencies are queried most often. Each lookup from the Calculator increments usage counters
+          for both currencies in the pair.
+        </p>
+        <a mat-stroked-button color="primary" routerLink="/analytics">Open Analytics</a>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Available currencies</mat-card-title>
+      <mat-card-subtitle>EUR base · Appendix B spread groups</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="currency-grid">
+        @for (c of currencies; track c.code) {
+          <div class="currency-item">
+            <span class="code">{{ c.code }}</span>
+            <span class="name">{{ c.name }}</span>
+            <span class="spread">{{ c.spread }}</span>
+          </div>
+        }
+      </div>
+      <p class="hint">
+        Quick pairs to try:
+        @for (code of currencyCodes.slice(0, 6); track code; let last = $last) {
+          <strong>{{ code }}</strong>@if (!last) {, }
+        }
+        — all combinations are supported when data exists for the selected date.
+      </p>
+    </mat-card-content>
+  </mat-card>
+</div>

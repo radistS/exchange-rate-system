@@ -1,0 +1,51 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>Usage Analytics</mat-card-title>
+    <mat-card-subtitle>Currency query counts from the API</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    @let state = viewState();
+    @switch (state.status) {
+      @case ('loading') {
+        <mat-spinner diameter="40" />
+      }
+      @case ('error') {
+        @if (state.status === 'error') {
+          <p class="error-text">{{ state.error }}</p>
+        }
+      }
+      @case ('data') {
+        @if (state.status === 'data') {
+          @if (state.data.topCurrencies.length === 0) {
+            <p class="hint">No usage data yet. Run some exchange queries first.</p>
+          } @else {
+            <div class="chart-wrap">
+              <canvas baseChart type="bar" [data]="barChartData" [options]="barChartOptions"></canvas>
+            </div>
+            <table mat-table [dataSource]="state.data.topCurrencies" class="usage-table">
+              <ng-container matColumnDef="currency">
+                <th mat-header-cell *matHeaderCellDef>Currency</th>
+                <td mat-cell *matCellDef="let row">{{ row.currency }}</td>
+              </ng-container>
+              <ng-container matColumnDef="totalCount">
+                <th mat-header-cell *matHeaderCellDef>Queries</th>
+                <td mat-cell *matCellDef="let row">{{ row.totalCount }}</td>
+              </ng-container>
+              <ng-container matColumnDef="lastQueried">
+                <th mat-header-cell *matHeaderCellDef>Last queried</th>
+                <td mat-cell *matCellDef="let row">
+                  {{ row.lastQueried ? (row.lastQueried | date: 'yyyy-MM-dd') : '—' }}
+                </td>
+              </ng-container>
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+            </table>
+          }
+        }
+      }
+      @default {
+        <p class="hint">Loading analytics…</p>
+      }
+    }
+  </mat-card-content>
+</mat-card>

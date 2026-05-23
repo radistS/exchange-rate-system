@@ -1,0 +1,41 @@
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  align-items: start;
+  margin-bottom: 16px;
+}
+
+.grid-two {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 768px) {
+  .grid-two {
+    grid-template-columns: 1fr;
+  }
+}
+
+.chart-wrap {
+  height: 280px;
+}
+
+.table-wrap {
+  max-height: 280px;
+  overflow: auto;
+}
+
+.rates-table {
+  width: 100%;
+}
+
+.hint {
+  color: #5f6368;
+}
+
+.insight-card {
+  margin-top: 0;
+}

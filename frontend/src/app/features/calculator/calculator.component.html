@@ -1,0 +1,55 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>Exchange Rate Calculator</mat-card-title>
+    <mat-card-subtitle>Spread-adjusted rate from the API</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <form [formGroup]="form" (ngSubmit)="submit()" class="form-grid">
+      <mat-form-field appearance="outline">
+        <mat-label>From</mat-label>
+        <input matInput formControlName="from" maxlength="3" />
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>To</mat-label>
+        <input matInput formControlName="to" maxlength="3" />
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Date (optional)</mat-label>
+        <input matInput [matDatepicker]="datePicker" formControlName="date" />
+        <mat-datepicker-toggle matIconSuffix [for]="datePicker" />
+        <mat-datepicker #datePicker />
+      </mat-form-field>
+      <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid">Get rate</button>
+    </form>
+
+    @let state = resultState();
+    @switch (state.status) {
+      @case ('idle') {
+        <p class="hint">Enter a currency pair and submit.</p>
+      }
+      @case ('loading') {
+        <mat-spinner diameter="40" />
+      }
+      @case ('error') {
+        @if (state.status === 'error') {
+          <p class="error-text">{{ state.error }}</p>
+        }
+      }
+      @case ('data') {
+        @if (state.status === 'data') {
+          <div class="result">
+            <p>
+              <strong>{{ state.data.from }}/{{ state.data.to }}</strong>
+              on {{ state.data.date }}
+            </p>
+            <p class="rate">{{ state.data.exchange | number: '1.2-10' }}</p>
+            <p class="meta">
+              Query counts: {{ state.data.from }}={{ state.data.fromQueryCount }},
+              {{ state.data.to }}={{ state.data.toQueryCount }}
+            </p>
+          </div>
+        }
+      }
+    }
+  </mat-card-content>
+</mat-card>
