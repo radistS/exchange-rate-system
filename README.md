@@ -2,7 +2,7 @@
 
 Full-stack solution to the Marcura senior full-stack assessment. Spring Boot backend + Angular SPA + Spring AI trend insight, packaged so a reviewer can run the whole stack locally with Docker Compose or three terminal commands.
 
-> **Quick links:** [PLAN.md](./PLAN.md) (up-front planning artefact) · [.cursor/](./.cursor/) (Cursor agent rules) · [GitHub](https://github.com/radistS/exchange-rate-system) · [Swagger UI](http://localhost:8080/swagger-ui.html) (after backend boot)
+> **Quick links:** [PLAN.md](./PLAN.md) (up-front planning artefact) · [CLAUDE.md](./CLAUDE.md) (agent context) · [.cursor/](./.cursor/) (Cursor rules) · [GitHub](https://github.com/radistS/exchange-rate-system) · [Swagger UI](http://localhost:8080/swagger-ui.html) (after backend boot)
 
 ---
 
@@ -121,6 +121,7 @@ Primary agent: **Cursor** (Agent mode) with rules loaded from `.cursor/` and an 
 | File | Purpose |
 |------|---------|
 | [`PLAN.md`](./PLAN.md) | Phase-by-phase plan produced with the agent *before* bulk implementation. Ordered by rubric weight so time tracks marks. |
+| [`CLAUDE.md`](./CLAUDE.md) | Repo-wide agent context — hard constraints, commands, key classes, known overrides (Claude Code / Cursor). |
 | [`.cursor/1-project.md`](./.cursor/1-project.md) | Repo-wide rules — BigDecimal, Fixer `rate_date` source, concurrency strategy, layering, commit conventions. |
 | [`.cursor/2-be-java.md`](./.cursor/2-be-java.md) | Backend-scoped — constructor injection, record DTOs, `@Transactional`, Spring AI prompt rules. Glob: `backend/**/*.java`. |
 | [`.cursor/3-fe-angular.md`](./.cursor/3-fe-angular.md) | Frontend-scoped — standalone components, `ViewState`, single `ApiService`, strict TypeScript. Glob: `frontend/**/*.{ts,html,scss}`. |
@@ -282,7 +283,8 @@ exchange-rate-system/
 ├── docker-compose.yml               # postgres, ollama, backend, frontend
 ├── .env.example
 ├── PLAN.md
-├── .cursor/                         # Cursor agent rules
+├── CLAUDE.md                      # Agent context (Claude Code / Cursor)
+├── .cursor/                         # Cursor-scoped rules
 └── README.md
 ```
 
