@@ -217,6 +217,16 @@ If Ollama is unreachable, `TrendInsightService` logs a warning and returns a det
 
 Response shapes match **Appendix A** (`exchange`, `analytics`, `insight`). Errors are RFC 7807 `ProblemDetail` JSON; the frontend `ApiService` normalises failures into a consistent error shape.
 
+### OpenAPI & Postman
+
+| Artifact | Path |
+|----------|------|
+| OpenAPI 3 (static) | [`openapi/openapi.yaml`](./openapi/openapi.yaml) |
+| Postman collection | [`postman/Exchange-Rate-System.postman_collection.json`](./postman/Exchange-Rate-System.postman_collection.json) |
+| Postman environment | [`postman/local.postman_environment.json`](./postman/local.postman_environment.json) |
+
+**Postman:** Import collection + environment → select **Exchange Rate — Local** → run after `docker compose up`.
+
 ---
 
 ## 6. Spread calculation & concurrency
