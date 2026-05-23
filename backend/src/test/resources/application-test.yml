@@ -1,0 +1,17 @@
+spring:
+  task:
+    scheduling:
+      enabled: false
+  ai:
+    ollama:
+      enabled: false
+  flyway:
+    enabled: true
+
+fixer:
+  api-key: test-key
+  base-currency: EUR
+  startup-enabled: false
+
+app:
+  sample-rates-enabled: false
