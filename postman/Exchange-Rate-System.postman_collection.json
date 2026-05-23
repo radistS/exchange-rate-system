@@ -1,0 +1,203 @@
+{
+  "info": {
+    "_postman_id": "marcura-exchange-rate-system",
+    "name": "Exchange Rate System",
+    "description": "Marcura assessment API — spread-adjusted rates, analytics, history, AI insight, admin refresh.\n\nImport `local.postman_environment.json` for `baseUrl` variable.\n\nRequires backend at http://localhost:8080 with sample or Fixer data loaded.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "fromCurrency",
+      "value": "EUR"
+    },
+    {
+      "key": "toCurrency",
+      "value": "PLN"
+    },
+    {
+      "key": "rateDate",
+      "value": "2026-05-20"
+    },
+    {
+      "key": "fromDate",
+      "value": "2026-04-23"
+    },
+    {
+      "key": "toDate",
+      "value": "2026-05-20"
+    }
+  ],
+  "item": [
+    {
+      "name": "Exchange",
+      "item": [
+        {
+          "name": "Get exchange rate (latest)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/exchange?from={{fromCurrency}}&to={{toCurrency}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["exchange"],
+              "query": [
+                { "key": "from", "value": "{{fromCurrency}}" },
+                { "key": "to", "value": "{{toCurrency}}" }
+              ]
+            },
+            "description": "Appendix A — spread-adjusted rate; increments usage counters."
+          },
+          "response": []
+        },
+        {
+          "name": "Get exchange rate (by date)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/exchange?from={{fromCurrency}}&to={{toCurrency}}&date={{rateDate}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["exchange"],
+              "query": [
+                { "key": "from", "value": "{{fromCurrency}}" },
+                { "key": "to", "value": "{{toCurrency}}" },
+                { "key": "date", "value": "{{rateDate}}" }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get historical rates",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/exchange/history?from={{fromCurrency}}&to={{toCurrency}}&fromDate={{fromDate}}&toDate={{toDate}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["exchange", "history"],
+              "query": [
+                { "key": "from", "value": "{{fromCurrency}}" },
+                { "key": "to", "value": "{{toCurrency}}" },
+                { "key": "fromDate", "value": "{{fromDate}}" },
+                { "key": "toDate", "value": "{{toDate}}" }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get trend insight (EUR/GBP)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/exchange/insight?from=EUR&to=GBP&fromDate={{fromDate}}&toDate={{toDate}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["exchange", "insight"],
+              "query": [
+                { "key": "from", "value": "EUR" },
+                { "key": "to", "value": "GBP" },
+                { "key": "fromDate", "value": "{{fromDate}}" },
+                { "key": "toDate", "value": "{{toDate}}" }
+              ]
+            },
+            "description": "Appendix A insight shape. Requires Ollama model or returns fallback text."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Analytics",
+      "item": [
+        {
+          "name": "Get usage analytics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/analytics",
+              "host": ["{{baseUrl}}"],
+              "path": ["analytics"]
+            },
+            "description": "Appendix A — topCurrencies by query count."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Admin",
+      "item": [
+        {
+          "name": "Refresh latest (Fixer)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/admin/refresh",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "refresh"]
+            },
+            "description": "Requires FIXER_API_KEY in backend .env"
+          },
+          "response": []
+        },
+        {
+          "name": "Refresh date range (Fixer backfill)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/admin/refresh?from={{fromDate}}&to={{toDate}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "refresh"],
+              "query": [
+                { "key": "from", "value": "{{fromDate}}" },
+                { "key": "to", "value": "{{toDate}}" }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Health & Docs",
+      "item": [
+        {
+          "name": "Actuator health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/actuator/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["actuator", "health"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "OpenAPI JSON (runtime)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api-docs",
+              "host": ["{{baseUrl}}"],
+              "path": ["api-docs"]
+            },
+            "description": "Live springdoc spec from running backend."
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

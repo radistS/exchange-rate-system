@@ -1,0 +1,334 @@
+openapi: 3.0.3
+info:
+  title: Exchange Rate Management API
+  description: |
+    Marcura assessment — spread-adjusted exchange rates, usage analytics,
+    historical series, and AI trend insights.
+
+    Live spec is also served at runtime: `GET /api-docs` (springdoc).
+  version: 1.0.0
+  contact:
+    name: Marcura Exchange Rate System
+  license:
+    name: Assessment submission
+
+servers:
+  - url: http://localhost:8080
+    description: Local / Docker Compose backend
+
+tags:
+  - name: Exchange
+    description: Spread-adjusted rates and history
+  - name: Analytics
+    description: Currency query usage
+  - name: Admin
+    description: Manual Fixer.io ingestion
+
+paths:
+  /exchange:
+    get:
+      tags: [Exchange]
+      summary: Spread-adjusted exchange rate for a currency pair
+      description: |
+        Returns Appendix A shape. Increments `fromQueryCount` and `toQueryCount`
+        for both currencies. If `date` is omitted, uses the latest available rate date.
+      operationId: getExchange
+      parameters:
+        - $ref: '#/components/parameters/fromCurrency'
+        - $ref: '#/components/parameters/toCurrency'
+        - name: date
+          in: query
+          required: false
+          description: Business date (ISO). Optional — latest if omitted.
+          schema:
+            type: string
+            format: date
+          example: "2026-05-20"
+      responses:
+        '200':
+          description: Rate found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExchangeResponse'
+              example:
+                from: EUR
+                to: PLN
+                exchange: 4.4978125000
+                date: "2026-05-20"
+                fromQueryCount: 1
+                toQueryCount: 1
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /exchange/history:
+    get:
+      tags: [Exchange]
+      summary: Spread-adjusted historical rates
+      operationId: getHistory
+      parameters:
+        - $ref: '#/components/parameters/fromCurrency'
+        - $ref: '#/components/parameters/toCurrency'
+        - $ref: '#/components/parameters/fromDate'
+        - $ref: '#/components/parameters/toDate'
+      responses:
+        '200':
+          description: Rate series for chart/table
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HistoryResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /exchange/insight:
+    get:
+      tags: [Exchange]
+      summary: AI-generated trend insight for a period
+      description: Requires Ollama with configured model; falls back to deterministic summary if unavailable.
+      operationId: getInsight
+      parameters:
+        - $ref: '#/components/parameters/fromCurrency'
+        - $ref: '#/components/parameters/toCurrency'
+        - $ref: '#/components/parameters/fromDate'
+        - $ref: '#/components/parameters/toDate'
+      responses:
+        '200':
+          description: Insight text (Appendix A shape)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InsightResponse'
+              example:
+                from: EUR
+                to: GBP
+                fromDate: "2026-04-23"
+                toDate: "2026-05-20"
+                insight: EUR/GBP softened over the period with the steepest move in late April.
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /analytics:
+    get:
+      tags: [Analytics]
+      summary: Currency query usage statistics
+      operationId: getAnalytics
+      responses:
+        '200':
+          description: Top currencies by query count (Appendix A shape)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalyticsResponse'
+              example:
+                topCurrencies:
+                  - currency: EUR
+                    totalCount: 142
+                    lastQueried: "2026-05-20"
+                  - currency: PLN
+                    totalCount: 98
+                    lastQueried: "2026-05-19"
+
+  /admin/refresh:
+    post:
+      tags: [Admin]
+      summary: Trigger Fixer.io ingestion
+      description: |
+        Without query params — ingests latest Fixer snapshot (upsert).
+        With `from` and `to` — backfills each calendar day in range.
+        Requires `FIXER_API_KEY`. Does not increment usage counters.
+      operationId: refreshRates
+      parameters:
+        - name: from
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+          example: "2026-04-23"
+        - name: to
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+          example: "2026-05-20"
+      responses:
+        '200':
+          description: Ingestion completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IngestionResponse'
+              example:
+                ratesUpserted: 540
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '502':
+          description: Fixer.io error or missing API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+
+components:
+  parameters:
+    fromCurrency:
+      name: from
+      in: query
+      required: true
+      description: ISO 4217 currency code (3 letters)
+      schema:
+        type: string
+        pattern: '^[A-Za-z]{3}$'
+      example: EUR
+    toCurrency:
+      name: to
+      in: query
+      required: true
+      description: ISO 4217 currency code (3 letters)
+      schema:
+        type: string
+        pattern: '^[A-Za-z]{3}$'
+      example: PLN
+    fromDate:
+      name: fromDate
+      in: query
+      required: true
+      schema:
+        type: string
+        format: date
+      example: "2026-04-23"
+    toDate:
+      name: toDate
+      in: query
+      required: true
+      schema:
+        type: string
+        format: date
+      example: "2026-05-20"
+
+  schemas:
+    ExchangeResponse:
+      type: object
+      required: [from, to, exchange, date, fromQueryCount, toQueryCount]
+      properties:
+        from:
+          type: string
+          example: EUR
+        to:
+          type: string
+          example: PLN
+        exchange:
+          type: number
+          description: Spread-adjusted rate
+          example: 4.4978125000
+        date:
+          type: string
+          format: date
+        fromQueryCount:
+          type: integer
+          format: int64
+        toQueryCount:
+          type: integer
+          format: int64
+
+    HistoryResponse:
+      type: object
+      required: [from, to, rates]
+      properties:
+        from:
+          type: string
+        to:
+          type: string
+        rates:
+          type: array
+          items:
+            $ref: '#/components/schemas/RatePoint'
+
+    RatePoint:
+      type: object
+      required: [date, rate]
+      properties:
+        date:
+          type: string
+          format: date
+        rate:
+          type: number
+
+    InsightResponse:
+      type: object
+      required: [from, to, fromDate, toDate, insight]
+      properties:
+        from:
+          type: string
+        to:
+          type: string
+        fromDate:
+          type: string
+          format: date
+        toDate:
+          type: string
+          format: date
+        insight:
+          type: string
+
+    AnalyticsResponse:
+      type: object
+      required: [topCurrencies]
+      properties:
+        topCurrencies:
+          type: array
+          items:
+            $ref: '#/components/schemas/CurrencyUsage'
+
+    CurrencyUsage:
+      type: object
+      required: [currency, totalCount]
+      properties:
+        currency:
+          type: string
+        totalCount:
+          type: integer
+          format: int64
+        lastQueried:
+          type: string
+          format: date
+          nullable: true
+
+    IngestionResponse:
+      type: object
+      required: [ratesUpserted]
+      properties:
+        ratesUpserted:
+          type: integer
+          description: Total rows upserted or inserted
+
+    ProblemDetail:
+      type: object
+      description: RFC 7807 problem detail
+      properties:
+        type:
+          type: string
+        title:
+          type: string
+        status:
+          type: integer
+        detail:
+          type: string
+
+  responses:
+    BadRequest:
+      description: Invalid request parameters
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetail'
+    NotFound:
+      description: Rate not found for date/currency pair
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetail'
