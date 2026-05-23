@@ -1,0 +1,67 @@
+# --- OS ---
+.DS_Store
+Thumbs.db
+
+# --- IDE ---
+.idea/
+*.iml
+*.ipr
+*.iws
+.project
+.classpath
+.settings/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/tasks.json
+
+# --- Secrets & local env ---
+.env
+.env.*
+!.env.example
+
+# --- Logs ---
+*.log
+logs/
+
+# =============================================================================
+# Backend — Java / Spring Boot / Maven
+# =============================================================================
+backend/target/
+backend/.classpath
+backend/.factorypath
+backend/.springBeans
+backend/.sts4-cache
+backend/nbproject/private/
+backend/nbbuild/
+backend/dist/
+backend/out/
+backend/bin/
+backend/*.jar
+backend/*.war
+backend/*.ear
+backend/*.class
+backend/hs_err_pid*
+backend/replay_pid*
+
+# =============================================================================
+# Frontend — Angular / Node / npm
+# =============================================================================
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+frontend/.sass-cache/
+frontend/connect.lock
+frontend/coverage/
+frontend/libpeerconnection.log
+frontend/npm-debug.log*
+frontend/yarn-error.log*
+frontend/testem.log
+frontend/typings/
+frontend/.nx/cache
+frontend/.eslintcache
+
+# =============================================================================
+# Docker (local overrides only)
+# =============================================================================
+docker-compose.override.yml

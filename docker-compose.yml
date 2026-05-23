@@ -1,0 +1,79 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: exchange-postgres
+    environment:
+      POSTGRES_USER: ${DATABASE_USER:-exchange}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-exchange}
+      POSTGRES_DB: ${POSTGRES_DB:-exchange_rates}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USER:-exchange} -d ${POSTGRES_DB:-exchange_rates}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: exchange-ollama
+    ports:
+      - "${OLLAMA_PORT:-11434}:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    healthcheck:
+      test: ["CMD-SHELL", "ollama list || exit 0"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  backend:
+    build:
+      context: ./backend
+    container_name: exchange-backend
+    ports:
+      - "${BACKEND_PORT:-8080}:8080"
+    environment:
+      DATABASE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-exchange_rates}
+      DATABASE_USER: ${DATABASE_USER:-exchange}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD:-exchange}
+      FIXER_API_KEY: ${FIXER_API_KEY:-}
+      FIXER_BASE_URL: ${FIXER_BASE_URL:-https://data.fixer.io/api}
+      FIXER_BASE_CURRENCY: ${FIXER_BASE_CURRENCY:-EUR}
+      FIXER_STARTUP_ENABLED: ${FIXER_STARTUP_ENABLED:-true}
+      FIXER_STARTUP_BACKFILL_DAYS: ${FIXER_STARTUP_BACKFILL_DAYS:-30}
+      SAMPLE_RATES_ENABLED: ${SAMPLE_RATES_ENABLED:-true}
+      SAMPLE_RATES_DAYS: ${SAMPLE_RATES_DAYS:-30}
+      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://ollama:11434}
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-llama3.2}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:4200}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      ollama:
+        condition: service_started
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fs http://localhost:8080/actuator/health | grep -q UP"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: exchange-frontend
+    ports:
+      - "${FRONTEND_PORT:-4200}:80"
+    environment:
+      API_URL: ${API_URL:-http://localhost:8080}
+    depends_on:
+      backend:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+  ollama_data:
