@@ -2,7 +2,7 @@
 
 Full-stack solution to the Marcura senior full-stack assessment. Spring Boot backend + Angular SPA + Spring AI trend insight, packaged so a reviewer can run the whole stack locally with Docker Compose or three terminal commands.
 
-> **Quick links:** [PLAN.md](./PLAN.md) (up-front planning artefact) · [CLAUDE.md](./CLAUDE.md) (agent context) · [.cursor/](./.cursor/) (Cursor rules) · [GitHub](https://github.com/radistS/exchange-rate-system) · [Swagger UI](http://localhost:8080/swagger-ui.html) (after backend boot)
+> **Quick links:** [PLAN.md](./PLAN.md) · [CLAUDE.md](./CLAUDE.md) · [GRADING_RUBRIC.md](./GRADING_RUBRIC.md) (self-review) · [GitHub](https://github.com/radistS/exchange-rate-system) · [Swagger UI](http://localhost:8080/swagger-ui.html)
 
 ---
 
